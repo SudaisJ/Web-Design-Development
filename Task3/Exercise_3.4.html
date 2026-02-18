@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+  <body>
+    <h1>Travel reservation form</h1>
+
+    <p><strong>* denotes mandotory</strong></p>
+
+    <form>
+      <label for="full_name">Full name*:</label><br />
+      <input
+        type="text"
+        id="full_name"
+        name="full_name"
+        placeholder="FirstName LastName"
+      />
+      <br /><br />
+
+      <label for="email">Email address*:</label><br />
+      <input type="email" id="email" name="email" placeholder="EMAIL_ADDRESS" />
+      <br /><br />
+
+      <label for="package">Select Tour Package* :</label><br />
+      <select id="package" name="package">
+        <option value="goa">Goa</option>
+        <option value="other">Other</option>
+      </select>
+      <br /><br />
+
+      <label for="arrival_date">Arrival date*:</label><br />
+      <input
+        type="text"
+        id="arrival_date"
+        name="arrival_date"
+        placeholder="m/d/y"
+      />
+      <br /><br />
+
+      <label for="persons">Number of persons*:</label><br />
+      <input
+        type="text"
+        id="persons"
+        name="persons"
+        placeholder="UNKNOWN_TYPE"
+      />
+      <br /><br />
+
+      <label>What would you want to avail?*</label><br />
+      Boarding <input type="checkbox" name="avail" value="boarding" /><br />
+      Fooding <input type="checkbox" name="avail" value="fooding" /><br />
+      Sight seeing <input type="checkbox" name="avail" value="sightseeing" />
+      <br /><br />
+
+      <label for="coupon">Discout Coupon code:</label><br />
+      <input type="text" id="coupon" name="coupon" placeholder="UNKNOWN_TYPE" />
+      <br /><br />
+
+      <label>Terms and conditions*</label><br />
+      <input type="radio" id="agree" name="terms" value="agree" />
+      <label for="agree">I agree</label>
+      <input type="radio" id="disagree" name="terms" value="disagree" />
+      <label for="disagree">I disagree</label>
+      <br /><br />
+
+      <input type="submit" value="Complete reservation" />
+    </form>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/t9MJ1gxcJ4w?si=vkWdd3MjUcBnGPlT" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  </body>
+</html>

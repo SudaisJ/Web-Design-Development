@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #838469f9;
+    line-height: 1.6;
+}
+
+h1 {
+    text-align: center;
+}
+
+/* 1️⃣ ::first-line */
+p::first-line {
+    color: blue;
+    font-weight: bold;
+}
+
+/* 2️⃣ ::first-letter */
+p::first-letter {
+    font-size: 32px;
+    color: red;
+}
+
+/* 3️⃣ ::before */
+h2::before {
+    content: "---> ";
+    color: gold;
+    font-size: 20px;
+}
+
+/* 4️⃣ ::after */
+h2::after {
+    content: " !";
+    color: green;
+    font-size: 18px;
+}
