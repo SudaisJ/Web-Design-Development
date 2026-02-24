@@ -1,0 +1,43 @@
+body {
+    background-color: lightgray;
+    font-family: Arial;
+}
+.main {
+    width: 90%;
+    margin: 20px auto;
+    border: 2px solid black;
+    background-color: white;
+}
+.header {
+    background-color: green;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+.menu {
+    background-color: black;
+}
+.menu ul {
+    list-style-type: none; 
+    margin: 0;
+    padding: 10px;
+}
+.menu ul li {
+    display: inline;         
+    color: white;
+    margin-right: 20px;
+    font-weight: bold;
+}
+.section {
+    text-align: center;
+    padding: 20px;
+}
+.box {
+    width: 30%;
+    display: inline-block;
+    vertical-align: top;
+    margin: 10px;
+}
+.box h2 {
+    color: green;
+}
