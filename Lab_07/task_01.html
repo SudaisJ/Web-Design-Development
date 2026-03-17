@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Theme Switcher - Task 1</title>
+    <style>
+        body { transition: background-color 0.5s, color 0.5s; padding: 50px; text-align: center; }
+        #heading { transition: font-size 0.3s; cursor: pointer; }
+        .btn-container { margin-top: 20px; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; font-weight: bold; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1 id="heading" onmouseenter="grow()" onmouseleave="shrink()">Interactive Theme Switcher</h1>
+    <p>Click the buttons below to change the website theme dynamically.</p>
+
+    <div class="btn-container">
+        <button onclick="changeTheme('black', 'white')">Dark Mode</button>
+        
+        <button onclick="changeTheme('white', 'black')">Light Mode</button>
+        
+        <button onclick="changeTheme('#add8e6', '#00008b')">Blue Theme</button>
+    </div>
+
+    <script>
+        function changeTheme(bgColor, textColor) {
+            document.body.style.backgroundColor = bgColor;
+            document.body.style.color = textColor;
+        }
+
+        const h = document.getElementById('heading');
+        function grow() { h.style.fontSize = "4rem"; }  
+        function shrink() { h.style.fontSize = "2rem"; } 
+    </script>
+
+</body>
+</html>

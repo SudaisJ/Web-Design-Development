@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration - Task 2</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 40px; }
+        #regForm { 
+            padding: 20px; border: 1px solid #ccc; border-radius: 10px; width: 400px; 
+            transition: background-color 0.5s; 
+        }
+        .field { margin-bottom: 15px; }
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], select {
+            width: 100%; padding: 8px; box-sizing: border-box;
+        }
+        .error-border { border: 2px solid red !important; } /* Highlight with red border [cite: 221] */
+        .msg { font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <form id="regForm" onsubmit="return validate(event)">
+        <h2>Student Registration</h2>
+        
+        <div class="field">
+            <label>Full Name</label>
+            <input type="text" id="name">
+        </div>
+
+        <div class="field">
+            <label>Email Address</label>
+            <input type="email" id="email">
+        </div>
+
+        <div class="field">
+            <label>Password</label>
+            <input type="password" id="pass">
+        </div>
+
+        <div class="field">
+            <label>Confirm Password</label>
+            <input type="password" id="confirm">
+        </div>
+
+        <div class="field">
+            <label>Age (18-40)</label>
+            <input type="number" id="age">
+        </div>
+
+        <div class="field">
+            <label>Gender:</label>
+            <input type="radio" name="gender" value="male" checked> Male
+            <input type="radio" name="gender" value="female"> Female
+            <input type="radio" name="gender" value="other"> Other
+        </div>
+
+        <div class="field">
+            <label>Department</label>
+            <select id="dept">
+                <option value="">Select Dept</option>
+                <option>Computer Science</option>
+                <option>Engineering</option>
+            </select>
+        </div>
+
+        <button type="submit">Register</button>
+        <div id="status" class="msg"></div>
+    </form>
+
+    <script>
+        function validate(e) {
+            e.preventDefault();
+            const f = {
+                name: document.getElementById('name'),
+                email: document.getElementById('email'),
+                pass: document.getElementById('pass'),
+                confirm: document.getElementById('confirm'),
+                age: document.getElementById('age')
+            };
+            const status = document.getElementById('status');
+            const form = document.getElementById('regForm');
+
+            // Reset styles
+            Object.values(f).forEach(el => el.classList.remove('error-border'));
+            status.innerText = "";
+
+            // Validation Logic [cite: 221]
+            if (f.name.value.trim() === "") {
+                return invalidate(f.name, "Name is required");
+            }
+            if (!f.email.value.includes('@') || !f.email.value.includes('.')) {
+                return invalidate(f.email, "Email must contain @ and .");
+            }
+            if (f.pass.value.length < 8) {
+                return invalidate(f.pass, "Password must be at least 8 characters");
+            }
+            if (f.pass.value !== f.confirm.value) {
+                return invalidate(f.confirm, "Passwords do not match");
+            }
+            const ageVal = parseInt(f.age.value);
+            if (isNaN(ageVal) || ageVal < 18 || ageVal > 40) {
+                return invalidate(f.age, "Age must be between 18 and 40");
+            }
+
+            // Success State [cite: 222]
+            form.style.backgroundColor = "lightgreen";
+            status.style.color = "green";
+            status.innerText = "Success! Form is valid.";
+            return true;
+        }
+
+        function invalidate(element, message) {
+            element.classList.add('error-border');
+            document.getElementById('status').style.color = "red";
+            document.getElementById('status').innerText = message;
+            return false;
+        }
+    </script>
+
+</body>
+</html>
