@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lab 8 – Task 2</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+
+    button {
+      margin: 5px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    h1 {
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="heading">Welcome to My Website</h1>
+
+  <p id="para">Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ipsam qui, atque sapiente eveniet minus nobis dolorum doloremque! Culpa quo adipisci necessitatibus labore amet magni nulla illo consequuntur harum eaque?</p>
+
+  <br>
+
+  <button id="darkBtn">Dark Mode</button>
+  <button id="lightBtn">Light Mode</button>
+  <button id="blueBtn">Blue Theme</button>
+
+  <script>
+    $(document).ready(function () {
+
+      // Dark Mode
+      $("#darkBtn").click(function () {
+        $("body").css("background-color", "black");
+        $("body").css("color", "white");
+      });
+
+      // Light Mode
+      $("#lightBtn").click(function () {
+        $("body").css("background-color", "white");
+        $("body").css("color", "black");
+      });
+
+      // Blue Theme
+      $("#blueBtn").click(function () {
+        $("body").css("background-color", "lightblue");
+        $("body").css("color", "darkblue");
+      });
+
+      // Hover effect on heading
+      $("#heading").mouseover(function () {
+        $(this).css("font-size", "50px");
+      });
+
+      $("#heading").mouseleave(function () {
+        $(this).css("font-size", "30px");
+      });
+
+    });
+  </script>
+
+</body>
+</html>

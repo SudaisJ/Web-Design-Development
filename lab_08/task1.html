@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lab 8 – Task 1</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+
+    p {
+      background-color: lightblue;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    button {
+      margin: 5px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Task 1 - jQuery Practice</h1>
+
+  <button id="showAll">Show All</button>
+  <button id="changeStyle">Change Style</button>
+
+  <br><br>
+
+  <p>Paragraph 1: jQuery is easy to learn.</p>
+  <p>Paragraph 2: jQuery makes web pages interactive.</p>
+  <p>Paragraph 3: jQuery has many useful methods.</p>
+  <p>Paragraph 4: Write less, do more with jQuery.</p>
+
+  <script>
+    $(document).ready(function () {
+
+      // Click a paragraph to hide it
+      $("p").click(function () {
+        $(this).hide();
+      });
+
+      // Show all paragraphs
+      $("#showAll").click(function () {
+        $("p").show();
+      });
+
+      // Change background color of all paragraphs
+      $("#changeStyle").click(function () {
+        $("p").css("background-color", "lightgreen");
+      });
+
+    });
+  </script>
+
+</body>
+</html>
