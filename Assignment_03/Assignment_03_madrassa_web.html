@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Madrassa Al-Noor — Islamic Education for Women</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Nastaliq+Urdu:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+:root {
+  --ink:       #1c1a14;
+  --ink-light: #3d3a2f;
+  --stone:     #7a7468;
+  --sand:      #f5f0e8;
+  --parchment: #faf7f2;
+  --white:     #ffffff;
+  --gold:      #b8902a;
+  --gold-pale: #e8d49a;
+  --gold-deep: #8a6818;
+  --teal:      #1a5c52;
+  --teal-mid:  #2a7a6d;
+  --teal-pale: #e6f2f0;
+  --border:    rgba(184,144,42,0.2);
+  --shadow-sm: 0 2px 12px rgba(28,26,20,0.06);
+  --shadow-md: 0 8px 32px rgba(28,26,20,0.10);
+  --shadow-lg: 0 20px 60px rgba(28,26,20,0.14);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--parchment);
+  color: var(--ink);
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* ─── NOISE TEXTURE OVERLAY ─── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ─── NAVBAR ─── */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  background: rgba(250,247,242,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.nav-emblem {
+  width: 36px; height: 36px;
+  background: var(--teal);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  color: var(--gold-pale);
+  font-family: 'Noto Nastaliq Urdu', serif;
+}
+
+.nav-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--teal);
+  letter-spacing: 0.01em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.25s;
+}
+
+.nav-links a:hover { color: var(--teal); }
+.nav-links a:hover::after { width: 100%; }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+
+.hero-left {
+  background: var(--teal);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10rem 4rem 6rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Geometric Islamic pattern on hero left */
+.hero-left::before {
+  content: '';
+  position: absolute;
+  bottom: -60px; right: -60px;
+  width: 320px; height: 320px;
+  border: 1px solid rgba(232,212,154,0.12);
+  border-radius: 50%;
+}
+.hero-left::after {
+  content: '';
+  position: absolute;
+  bottom: 20px; right: -20px;
+  width: 220px; height: 220px;
+  border: 1px solid rgba(232,212,154,0.08);
+  border-radius: 50%;
+}
+
+.hero-bismillah {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 1.9rem;
+  color: var(--gold-pale);
+  margin-bottom: 2.5rem;
+  line-height: 2;
+  direction: rtl;
+  opacity: 0.9;
+  animation: fadeUp 0.9s ease both;
+}
+
+.hero-tag {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-pale);
+  opacity: 0.65;
+  margin-bottom: 1rem;
+  animation: fadeUp 0.9s 0.1s ease both;
+}
+
+.hero-h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.12;
+  margin-bottom: 1.2rem;
+  animation: fadeUp 0.9s 0.2s ease both;
+}
+
+.hero-h1 em {
+  font-style: italic;
+  color: var(--gold-pale);
+}
+
+.hero-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 3rem;
+  line-height: 1.65;
+  animation: fadeUp 0.9s 0.3s ease both;
+}
+
+.hero-cta {
+  display: inline-flex;
+  gap: 1rem;
+  animation: fadeUp 0.9s 0.4s ease both;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background: var(--gold);
+  color: var(--white);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-primary:hover { background: var(--gold-deep); transform: translateY(-1px); }
+
+.btn-outline {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  border: 1px solid rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.85);
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover { border-color: var(--gold-pale); color: var(--gold-pale); }
+
+.hero-right {
+  background: var(--sand);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 4rem 3.5rem;
+  position: relative;
+}
+
+.hero-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5px;
+  background: rgba(184,144,42,0.15);
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: auto;
+  margin-bottom: 3rem;
+  animation: fadeUp 0.9s 0.5s ease both;
+}
+
+.stat-cell {
+  background: var(--parchment);
+  padding: 2rem 1.8rem;
+}
+
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--teal);
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--stone);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hero-right-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--stone);
+  border-left: 2px solid var(--gold);
+  padding-left: 1.2rem;
+  line-height: 1.75;
+  animation: fadeUp 0.9s 0.6s ease both;
+}
+
+.hero-ornament {
+  position: absolute;
+  top: 6rem; right: 3.5rem;
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 5rem;
+  color: rgba(26,92,82,0.06);
+  line-height: 1;
+  user-select: none;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── SECTION BASE ─── */
+.section {
+  padding: 7rem 5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-full {
+  padding: 7rem 0;
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 28px; height: 1px;
+  background: var(--gold);
+}
+
+.section-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.18;
+  margin-bottom: 0.5rem;
+}
+
+.section-h2 em { font-style: italic; color: var(--teal); }
+
+.section-urdu {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  direction: rtl;
+  font-size: 1.3rem;
+  color: var(--stone);
+  margin-bottom: 1.5rem;
+}
+
+.section-lead {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: var(--ink-light);
+  max-width: 620px;
+  line-height: 1.75;
+  margin-bottom: 3.5rem;
+}
+
+/* ─── DIVIDER ─── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 5rem;
+}
+.divider-line { flex: 1; height: 1px; background: var(--border); }
+.divider-icon { color: var(--gold); font-size: 1rem; font-family: 'Noto Nastaliq Urdu', serif; }
+
+/* ─── FOUNDER ─── */
+.founder-section { background: var(--white); }
+
+.founder-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 7rem 5rem;
+  display: grid;
+  grid-template-columns: 5fr 4fr;
+  gap: 6rem;
+  align-items: start;
+}
+
+.founder-message-block {
+  position: relative;
+}
+
+.founder-quote-mark {
+  font-family: 'Playfair Display', serif;
+  font-size: 8rem;
+  line-height: 0.7;
+  color: var(--gold-pale);
+  float: left;
+  margin-right: 0.2em;
+  margin-top: 0.15em;
+}
+
+.founder-body {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--ink-light);
+  line-height: 1.85;
+  margin-bottom: 1.5rem;
+}
+
+.founder-body strong {
+  color: var(--teal);
+  font-weight: 600;
+}
+
+.founder-sig-line {
+  width: 48px; height: 1px;
+  background: var(--gold);
+  margin: 2rem 0 1rem;
+}
+
+.founder-sig-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.founder-sig-title {
+  font-size: 0.82rem;
+  color: var(--stone);
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+/* Bio panel */
+.founder-bio-panel {
+  background: var(--sand);
+  border-radius: 6px;
+  padding: 2.5rem;
+  border: 1px solid var(--border);
+  position: sticky;
+  top: 88px;
+}
+
+.bio-badge {
+  display: inline-block;
+  background: var(--teal);
+  color: var(--gold-pale);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.9rem;
+  border-radius: 2px;
+  margin-bottom: 1.5rem;
+}
+
+.bio-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+
+.bio-sub {
+  font-size: 0.82rem;
+  color: var(--stone);
+  margin-bottom: 2rem;
+}
+
+.bio-group {
+  margin-bottom: 1.8rem;
+}
+
+.bio-group-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.bio-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  font-size: 0.88rem;
+  color: var(--ink-light);
+}
+
+.bio-dot {
+  width: 5px; height: 5px;
+  background: var(--gold);
+  border-radius: 50%;
+  margin-top: 0.45rem;
+  flex-shrink: 0;
+}
+
+/* ─── ANNOUNCEMENT BAND ─── */
+.announce-band {
+  background: linear-gradient(105deg, #0e3d35 0%, #1a5c52 55%, #2a7a6d 100%);
+  padding: 6rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.announce-band::before {
+  content: '٭';
+  position: absolute;
+  top: -1rem; right: 5rem;
+  font-size: 16rem;
+  color: rgba(255,255,255,0.03);
+  font-family: serif;
+}
+
+.announce-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4rem;
+  align-items: start;
+}
+
+.announce-text .eyebrow { color: var(--gold-pale); }
+.announce-text .eyebrow::before { background: var(--gold-pale); }
+
+.announce-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  color: var(--white);
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+  line-height: 1.15;
+}
+
+.announce-h2 em { font-style: italic; color: var(--gold-pale); }
+
+.announce-body {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 300;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.8;
+  max-width: 580px;
+  margin-bottom: 0.8rem;
+}
+
+.announce-body strong { color: var(--gold-pale); font-weight: 600; }
+
+.announce-dua {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.45);
+  margin-top: 1.5rem;
+}
+
+.announce-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 230px;
+}
+
+.a-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  padding: 1.3rem 1.6rem;
+}
+
+.a-card-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-pale);
+  margin-bottom: 0.35rem;
+}
+
+.a-card-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: var(--white);
+  font-weight: 600;
+}
+
+/* ─── COURSES ─── */
+.courses-section { background: var(--sand); }
+
+.courses-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 7rem 5rem;
+}
+
+/* Tab nav */
+.course-tabs {
+  display: flex;
+  gap: 0;
+  margin: 3rem 0 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.ctab {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stone);
+  padding: 0.9rem 1.6rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.ctab:hover { color: var(--ink); }
+.ctab.on { color: var(--teal); border-bottom-color: var(--teal); }
+
+/* Course panel */
+.cpanel { display: none; }
+.cpanel.on { display: block; }
+
+.course-intro {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: var(--ink-light);
+  line-height: 1.75;
+  max-width: 780px;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.course-intro .urdu-note {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  direction: rtl;
+  font-size: 1rem;
+  color: var(--stone);
+  margin-top: 0.75rem;
+}
+
+.years-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.year-col {
+  background: var(--white);
+  padding: 1.8rem;
+}
+
+.year-col:first-child { border-radius: 4px 0 0 4px; }
+.year-col:last-child  { border-radius: 0 4px 4px 0; }
+
+.year-tag {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
+}
+
+.year-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.year-urdu {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  direction: rtl;
+  font-size: 0.82rem;
+  color: var(--stone);
+  margin-bottom: 1.2rem;
+}
+
+.year-subjects {
+  list-style: none;
+}
+
+.year-subjects li {
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  padding: 0.42rem 0;
+  border-bottom: 1px solid rgba(184,144,42,0.1);
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.year-subjects li::before {
+  content: '';
+  width: 4px; height: 4px;
+  background: var(--gold-pale);
+  border-radius: 50%;
+  margin-top: 0.5rem;
+  flex-shrink: 0;
+}
+
+.year-subjects li:last-child { border-bottom: none; }
+
+.year-urdu-list {
+  list-style: none;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  direction: rtl;
+  text-align: right;
+}
+
+.year-urdu-list li {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 0.82rem;
+  color: var(--stone);
+  padding: 0.3rem 0;
+}
+
+/* Short / special grid */
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.subj-card {
+  background: var(--white);
+  border-radius: 6px;
+  padding: 1.8rem;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.subj-card:hover { box-shadow: var(--shadow-md); }
+
+.subj-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: var(--teal);
+}
+
+.subj-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: rgba(26,92,82,0.07);
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.subj-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.subj-urdu {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  direction: rtl;
+  font-size: 0.9rem;
+  color: var(--stone);
+  margin-bottom: 1rem;
+}
+
+.subj-list {
+  list-style: none;
+}
+
+.subj-list li {
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(184,144,42,0.08);
+  display: flex; gap: 0.6rem; align-items: flex-start;
+}
+
+.subj-list li:last-child { border-bottom: none; }
+
+.subj-list li::before {
+  content: '—';
+  color: var(--gold-pale);
+  font-size: 0.7rem;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+/* ─── CONTACT ─── */
+.contact-section {
+  background: var(--ink);
+  padding: 7rem 5rem;
+}
+
+.contact-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 5fr 4fr;
+  gap: 6rem;
+  align-items: start;
+}
+
+.contact-eyebrow { color: var(--gold-pale); }
+.contact-eyebrow::before { background: var(--gold-pale); }
+
+.contact-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.contact-h2 em { font-style: italic; color: var(--gold-pale); }
+
+.contact-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.75;
+  margin-bottom: 3rem;
+}
+
+.contact-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  padding: 1.4rem 1.6rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  transition: background 0.2s;
+}
+
+.contact-item:hover { background: rgba(255,255,255,0.04); }
+.contact-item:last-child { border-bottom: none; }
+
+.c-icon {
+  width: 34px; height: 34px;
+  background: rgba(184,144,42,0.15);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  color: var(--gold);
+}
+
+.c-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 0.2rem;
+}
+
+.c-value {
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.85);
+}
+
+/* Contact right — info panel */
+.contact-aside {
+  padding-top: 3rem;
+}
+
+.timing-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.timing-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+
+.timing-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.88rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.timing-row:last-child { border-bottom: none; }
+.timing-day { color: rgba(255,255,255,0.5); }
+.timing-time { color: rgba(255,255,255,0.85); font-weight: 500; }
+.timing-time.off { color: rgba(255,255,255,0.25); }
+
+.dua-box {
+  background: rgba(184,144,42,0.08);
+  border: 1px solid rgba(184,144,42,0.2);
+  border-radius: 6px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.dua-arabic {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 1.2rem;
+  color: var(--gold-pale);
+  direction: rtl;
+  line-height: 2;
+  margin-bottom: 0.5rem;
+}
+
+.dua-trans {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.4);
+}
+
+/* ─── FOOTER ─── */
+footer {
+  background: #0d0c09;
+  padding: 2rem 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(184,144,42,0.1);
+}
+
+.footer-copy {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.05em;
+}
+
+.footer-center {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 1.1rem;
+  color: rgba(184,144,42,0.4);
+  direction: rtl;
+}
+
+.footer-right {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.25);
+}
+
+/* ─── SCROLL REVEAL ─── */
+.sr { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.sr.in { opacity: 1; transform: none; }
+.sr-delay-1 { transition-delay: 0.1s; }
+.sr-delay-2 { transition-delay: 0.2s; }
+.sr-delay-3 { transition-delay: 0.3s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-right { display: none; }
+  .hero-left { padding: 8rem 2rem 5rem; }
+  .founder-inner, .announce-inner, .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .years-grid { grid-template-columns: 1fr 1fr; }
+  .section, .founder-inner, .courses-inner, .contact-section { padding-left: 2rem; padding-right: 2rem; }
+  .announce-band { padding: 4rem 2rem; }
+  .navbar { padding: 0 1.5rem; }
+  .nav-links { gap: 1.2rem; }
+  footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  .divider { margin: 0 2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="nav-brand" href="#">
+    <div class="nav-emblem">ن</div>
+    <span class="nav-name">Madrassa Al-Noor</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#founder">Founder</a></li>
+    <li><a href="#announce">Announcement</a></li>
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+    <p class="hero-tag">Islamic Education · Est. 2021</p>
+    <h1 class="hero-h1">Nurturing Women<br>of <em>Knowledge &</em><br>Character</h1>
+    <p class="hero-sub">Quality Islamic education rooted in the Quran, Sunnah, and centuries of scholarly tradition — for the women of tomorrow.</p>
+    <div class="hero-cta">
+      <a href="#courses" class="btn-primary">Explore Courses</a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-ornament">النور</div>
+    <div class="hero-stats-grid">
+      <div class="stat-cell">
+        <div class="stat-num">38+</div>
+        <div class="stat-label">Students Enrolled</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Experienced Muallimat</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Year Alima Program</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">2021</div>
+        <div class="stat-label">Year Founded</div>
+      </div>
+    </div>
+    <p class="hero-right-quote">"Seeking knowledge is an obligation upon every Muslim."<br><span style="font-size:0.9rem;color:var(--gold);font-style:normal;font-family:'DM Sans',sans-serif;">— Prophet Muhammad ﷺ</span></p>
+  </div>
+</div>
+
+<!-- FOUNDER -->
+<section id="founder">
+  <div class="founder-section">
+    <div class="founder-inner">
+      <div class="founder-message-block sr">
+        <div class="eyebrow">Message from the Founder</div>
+        <h2 class="section-h2" style="margin-bottom:1.5rem;">A word from<br><em>Molana XYZ</em></h2>
+        <div class="founder-quote-mark">"</div>
+        <p class="founder-body">In the name of Allah, the Most Gracious, the Most Merciful. This Madrassa was established in 2021 with the purpose of providing <strong>quality Islamic education</strong> and strong moral training for female students. Our goal is to help young women grow in knowledge, character, and confidence, guided by the teachings of Islam.</p>
+        <p class="founder-body">We encourage our students to learn with sincerity, respect, and dedication. Along with Islamic knowledge, we also focus on good manners, responsibility, and preparing students to become <strong>positive members of society</strong>.</p>
+        <p class="founder-body">May Allah bless all our students, guide them on the right path, and accept their efforts.</p>
+        <div class="founder-sig-line"></div>
+        <div class="founder-sig-name">Molana XYZ</div>
+        <div class="founder-sig-title">PhD Scholar &amp; Alim-e-Deen · Founder</div>
+      </div>
+      <div class="sr sr-delay-2">
+        <div class="founder-bio-panel">
+          <span class="bio-badge">Founder &amp; Director</span>
+          <div class="bio-name">Molana XYZ</div>
+          <div class="bio-sub">PhD Scholar · Alim-e-Deen</div>
+          <div class="bio-group">
+            <div class="bio-group-label">Educational Background</div>
+            <div class="bio-item"><div class="bio-dot"></div>Hifz-e-Quran (1996)</div>
+            <div class="bio-item"><div class="bio-dot"></div>Dars-e-Nizami, 8 Years (2000–2011)</div>
+            <div class="bio-item"><div class="bio-dot"></div>Bachelor's Degree (2003)</div>
+            <div class="bio-item"><div class="bio-dot"></div>PhD in Islamic Studies (2025)</div>
+          </div>
+          <div class="bio-group">
+            <div class="bio-group-label">Professional Experience</div>
+            <div class="bio-item"><div class="bio-dot"></div>Teaching &amp; Academic Experience (since 2014)</div>
+          </div>
+          <div class="bio-group" style="margin-bottom:0;">
+            <div class="bio-group-label">تعلیمی پس منظر</div>
+            <div style="font-family:'Noto Nastaliq Urdu',serif;direction:rtl;text-align:right;font-size:0.85rem;color:var(--stone);line-height:2.2;">
+              حفظ قرآن (۱۹۹۶)<br>
+              درس نظامی ۸ سال (۲۰۰۰–۲۰۱۱)<br>
+              بیچلر ڈگری (۲۰۰۳)<br>
+              پی ایچ ڈی اسلامی علوم (۲۰۲۵)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><div class="divider-line"></div><div class="divider-icon">✦</div><div class="divider-line"></div></div>
+
+<!-- ANNOUNCEMENT -->
+<div id="announce" class="announce-band">
+  <div class="announce-inner">
+    <div class="sr">
+      <div class="eyebrow announce-text">Announcement</div>
+      <h2 class="announce-h2">Fully Equipped for <em>Excellence</em></h2>
+      <p class="announce-body">Our Madrassa is fully equipped with a highly qualified teaching faculty consisting of <strong>8 experienced Muallimat</strong>, who possess strong educational expertise in Islamic studies. Through their dedicated teaching, students receive valuable and authentic Islamic education focusing on knowledge, character building, and moral development.</p>
+      <p class="announce-body">At present, more than <strong>38 students</strong> are enrolled and actively benefiting from this structured learning environment.</p>
+      <p class="announce-dua">May Allah bless this effort and make it a source of continuous reward. <em>Ameen.</em></p>
+    </div>
+    <div class="announce-cards sr sr-delay-2">
+      <div class="a-card">
+        <div class="a-card-label">Class Timings</div>
+        <div class="a-card-val">8:00 AM — 1:00 PM</div>
+      </div>
+      <div class="a-card">
+        <div class="a-card-label">Weekly Holiday</div>
+        <div class="a-card-val">Friday (Off)</div>
+      </div>
+      <div class="a-card">
+        <div class="a-card-label">Faculty</div>
+        <div class="a-card-val">8 Qualified Muallimat</div>
+      </div>
+      <div class="a-card">
+        <div class="a-card-label">Enrollment</div>
+        <div class="a-card-val">Open — Contact Us</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COURSES -->
+<div id="courses" class="courses-section">
+  <div class="courses-inner">
+    <div class="sr">
+      <div class="eyebrow">Academic Programs</div>
+      <h2 class="section-h2">Our <em>Courses</em></h2>
+      <div class="section-urdu">ہمارے تعلیمی پروگرام</div>
+    </div>
+    <div class="course-tabs sr sr-delay-1">
+      <button class="ctab on" onclick="switchTab('dars',this)">6-Year Alima</button>
+      <button class="ctab" onclick="switchTab('short',this)">40-Day Course</button>
+      <button class="ctab" onclick="switchTab('daily',this)">Daily Curriculum</button>
+      <button class="ctab" onclick="switchTab('ramadan',this)">Ramadan Special</button>
+    </div>
+
+    <!-- 6-Year -->
+    <div id="tp-dars" class="cpanel on sr">
+      <div class="course-intro">
+        <strong>Dars-e-Nizami — 6-Year Alima Course (درس نظامی)</strong><br>
+        Designed to produce complete Islamic scholars (Alima) with deep expertise in religious sciences, Arabic, Fiqh, Tafsir, and Hadith.
+        <div class="urdu-note">یہ کورس طالبات کو ایک مکمل اسلامی اسکالر (عالمہ) بنانے کے لیے ترتیب دیا گیا ہے، جس میں دینی علوم کی گہرائی اور تحقیق پر خصوصی توجہ دی جاتی ہے۔</div>
+      </div>
+      <div class="years-grid">
+        <div class="year-col">
+          <div class="year-tag">Year 1–2</div>
+          <div class="year-title">Foundation</div>
+          <div class="year-urdu">ابتدائی مرحلہ</div>
+          <ul class="year-subjects">
+            <li>Arabic Grammar (Nahw &amp; Sarf)</li>
+            <li>Basic Islamic Subjects</li>
+            <li>Fiqh &amp; Logic</li>
+            <li>Quran Translation — Intro</li>
+          </ul>
+          <ul class="year-urdu-list">
+            <li>عربی زبان کی بنیاد</li>
+            <li>بنیادی دینی مضامین</li>
+            <li>فقہ اور منطق</li>
+            <li>ترجمہ قرآن کا آغاز</li>
+          </ul>
+        </div>
+        <div class="year-col">
+          <div class="year-tag">Year 3–4</div>
+          <div class="year-title">Intermediate</div>
+          <div class="year-urdu">درمیانی مرحلہ</div>
+          <ul class="year-subjects">
+            <li>Advanced Arabic Grammar</li>
+            <li>Usool al-Fiqh</li>
+            <li>Tafsir al-Quran</li>
+            <li>Academic Research</li>
+            <li>Ilm al-Aqaid</li>
+          </ul>
+          <ul class="year-urdu-list">
+            <li>اعلیٰ عربی گرامر</li>
+            <li>اصول فقہ</li>
+            <li>تفسیر القرآن</li>
+            <li>علمی و تحقیقی مطالعہ</li>
+            <li>علم العقائد</li>
+          </ul>
+        </div>
+        <div class="year-col">
+          <div class="year-tag">Year 5</div>
+          <div class="year-title">Advanced</div>
+          <div class="year-urdu">پنجم</div>
+          <ul class="year-subjects">
+            <li>Fiqh (advanced)</li>
+            <li>Detailed Tafsir</li>
+            <li>Study of Noble Ahadith</li>
+          </ul>
+          <ul class="year-urdu-list">
+            <li>فقہ (اعلیٰ)</li>
+            <li>تفصیل کے ساتھ تفسیر</li>
+            <li>احادیث مبارکہ کا مطالعہ</li>
+          </ul>
+        </div>
+        <div class="year-col">
+          <div class="year-tag">Year 6</div>
+          <div class="year-title">Completion</div>
+          <div class="year-urdu">ششم</div>
+          <ul class="year-subjects">
+            <li>Sahih Bukhari</li>
+            <li>Sahih Muslim</li>
+            <li>Sunan Abi Dawud</li>
+            <li>Jami' al-Tirmidhi</li>
+            <li>Hadith Research &amp; Commentary</li>
+          </ul>
+          <ul class="year-urdu-list">
+            <li>صحیح بخاری</li>
+            <li>صحیح مسلم</li>
+            <li>سنن ابی داؤد</li>
+            <li>جامع ترمذی</li>
+            <li>حدیث کی تشریح اور تحقیق</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 40-day -->
+    <div id="tp-short" class="cpanel">
+      <div class="course-intro">
+        <strong>40-Day Short Course (روزہ مختصر کورس ۴۰)</strong><br>
+        Prepared for students during school holidays so they can learn Islamic sciences in a better manner and strengthen their foundation.
+        <div class="urdu-note">یہ مختصر کورس طالبات کے لیے تیار کیا گیا ہے تاکہ وہ چھٹیوں میں دینی علوم میں بہتر انداز میں سیکھ سکیں اور اپنی بنیاد مضبوط کریں۔</div>
+      </div>
+      <div class="subjects-grid">
+        <div class="subj-card">
+          <div class="subj-num">01</div>
+          <div class="subj-title">Aqaid (Islamic Beliefs)</div>
+          <div class="subj-urdu">عقائد</div>
+          <ul class="subj-list">
+            <li>Understanding Tawhid &amp; Risalat</li>
+            <li>Avoiding Shirk &amp; Bid'ah</li>
+            <li>Strong foundation of Aqaid</li>
+          </ul>
+        </div>
+        <div class="subj-card">
+          <div class="subj-num">02</div>
+          <div class="subj-title">Arabic Grammar</div>
+          <div class="subj-urdu">عربی گرامر</div>
+          <ul class="subj-list">
+            <li>Basic Nahw &amp; Sarf practice</li>
+            <li>Simple sentence structure</li>
+            <li>Word identification (Ism, Fi'l, Harf)</li>
+          </ul>
+        </div>
+        <div class="subj-card">
+          <div class="subj-num">03</div>
+          <div class="subj-title">Daily Arabic Conversation</div>
+          <div class="subj-urdu">روزانہ عربی بول چال</div>
+          <ul class="subj-list">
+            <li>Everyday simple sentences</li>
+            <li>Greetings &amp; general conversation</li>
+            <li>Pronunciation practice</li>
+          </ul>
+        </div>
+        <div class="subj-card">
+          <div class="subj-num">04</div>
+          <div class="subj-title">Fiqh — Women's Issues</div>
+          <div class="subj-urdu">فقہ عورتوں کے مسائل</div>
+          <ul class="subj-list">
+            <li>Taharah &amp; Salah issues</li>
+            <li>Haidh &amp; Nifas rulings</li>
+            <li>Fasting &amp; worship issues</li>
+            <li>Daily Shari'ah guidance</li>
+          </ul>
+        </div>
+        <div class="subj-card">
+          <div class="subj-num">05</div>
+          <div class="subj-title">Tajweed</div>
+          <div class="subj-urdu">تجوید</div>
+          <ul class="subj-list">
+            <li>Makhraj al-Huroof practice</li>
+            <li>Rules: Ghunna, Madd, Waqf</li>
+            <li>Correct pronunciation drills</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily -->
+    <div id="tp-daily" class="cpanel">
+      <div class="course-intro">
+        <strong>Daily Curriculum — Taleem al-Balagha (روزانہ نصاب)</strong><br>
+        The structured daily program followed in regular classes to ensure consistent spiritual and academic growth.
+      </div>
+      <div class="subjects-grid">
+        <div class="subj-card">
+          <div class="subj-num">01</div>
+          <div class="subj-title">Quran Translation</div>
+          <div class="subj-urdu">ترجمہ قرآن</div>
+          <ul class="subj-list">
+            <li>Daily selected verses</li>
+            <li>Easy meaning &amp; clarity</li>
+          </ul>
+        </div>
+        <div class="subj-card">
+          <div class="subj-num">02</div>
+          <div class="subj-title">Tafsir al-Quran</div>
+          <div class="subj-urdu">تفسیر قرآن</div>
+          <ul class="subj-list">
+            <li>Detailed verse commentary</li>
+            <li>Shan-e-Nuzool &amp; key points</li>
+            <li>Practical lesson</li>
+          </ul>
+        </div>
+        <div class="subj-card">
+          <div class="subj-num">03</div>
+          <div class="subj-title">Nazira-e-Quran</div>
+          <div class="subj-urdu">نظر قرآن</div>
+          <ul class="subj-list">
+            <li>Daily recitation practice</li>
+            <li>Fluency &amp; correct delivery</li>
+          </ul>
+        </div>
+        <div class="subj-card">
+          <div class="subj-num">04</div>
+          <div class="subj-title">Tajweed</div>
+          <div class="subj-urdu">تجوید</div>
+          <ul class="subj-list">
+            <li>Makhraj al-Huroof</li>
+            <li>Rules: Ghunna, Madd, Waqf</li>
+            <li>Pronunciation drills</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ramadan -->
+    <div id="tp-ramadan" class="cpanel">
+      <div class="course-intro">
+        <strong>Annual Holidays — 2-Month Special Course (سالانہ تعطیلات ۲ ماہ کا خصوصی کورس)</strong><br>
+        Held during Sha'ban and Ramadan al-Mubarak, arranged at two levels so different students and learners can benefit according to their needs.
+        <div class="urdu-note">شعبان اور رمضان المبارک — یہ کورس دو مختلف سطحوں پر ترتیب دیا گیا ہے تاکہ مختلف طلبہ و طالبات اپنی ضرورت کے مطابق استفادہ کر سکیں۔</div>
+      </div>
+      <div class="subjects-grid">
+        <div class="subj-card">
+          <div class="subj-num">01</div>
+          <div class="subj-title">Door-e-Tafseer (1)</div>
+          <div class="subj-urdu">دور تفسیر (۱) — عام لوگوں کے لیے</div>
+          <ul class="subj-list">
+            <li>Easy &amp; simple Quran Tafsir</li>
+            <li>Daily Quranic guidance for life</li>
+            <li>Important verses explained</li>
+            <li>Special focus on faith &amp; deeds</li>
+          </ul>
+        </div>
+        <div class="subj-card">
+          <div class="subj-num">02</div>
+          <div class="subj-title">Sarf &amp; Nahw (2)</div>
+          <div class="subj-urdu">صرف و نحو (۲) — طالبات و معلمات کے لیے</div>
+          <ul class="subj-list">
+            <li>Basic &amp; advanced Arabic Grammar</li>
+            <li>Sentence structure &amp; analysis</li>
+            <li>Identify Ism, Fi'l, Harf</li>
+            <li>Application in Quran &amp; Hadith</li>
+            <li>Practical grammar exercises</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div id="contact" class="contact-section">
+  <div class="contact-inner">
+    <div class="sr">
+      <div class="eyebrow contact-eyebrow">Get In Touch</div>
+      <h2 class="contact-h2">Visit or<br><em>Reach Out</em></h2>
+      <p class="contact-sub">We welcome inquiries about admission, courses, and partnerships. Our team is here to help.</p>
+      <div class="contact-items">
+        <div class="contact-item">
+          <div class="c-icon">📞</div>
+          <div>
+            <div class="c-label">Phone</div>
+            <div class="c-value">xyz</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="c-icon">✉</div>
+          <div>
+            <div class="c-label">Email</div>
+            <div class="c-value">xyz@gmail.com</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="c-icon">📍</div>
+          <div>
+            <div class="c-label">Address</div>
+            <div class="c-value">xyz, Khyber Pakhtunkhwa, Pakistan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-aside sr sr-delay-2">
+      <div class="timing-card">
+        <div class="timing-label">Class Schedule</div>
+        <div class="timing-row"><span class="timing-day">Saturday – Thursday</span><span class="timing-time">8:00 AM – 1:00 PM</span></div>
+        <div class="timing-row"><span class="timing-day">Friday</span><span class="timing-time off">Holiday</span></div>
+      </div>
+      <div class="dua-box">
+        <div class="dua-arabic">رَبِّ زِدْنِي عِلْمًا</div>
+        <div class="dua-trans">"My Lord, increase me in knowledge." — Quran 20:114</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2025 Madrassa Al-Noor · Khyber Pakhtunkhwa, Pakistan</div>
+  <div class="footer-center">النور</div>
+  <div class="footer-right">Est. 2021 · Islamic Education for Women</div>
+</footer>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.cpanel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ctab').forEach(b => b.classList.remove('on'));
+  document.getElementById('tp-' + id).classList.add('on');
+  btn.classList.add('on');
+}
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.sr').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
