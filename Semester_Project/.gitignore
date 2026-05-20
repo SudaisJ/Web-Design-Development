@@ -1,0 +1,14 @@
+# Ignore sensitive config with DB credentials
+config.php
+
+# XAMPP/PHP runtime
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/

@@ -1,0 +1,209 @@
+<?php
+require_once 'config.php';
+if (isLoggedIn()) redirect('dashboard.php');
+
+// Generate CAPTCHA
+if (!isset($_SESSION['reg_captcha_ans']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $num1 = rand(1, 9);
+    $num2 = rand(1, 9);
+    $_SESSION['reg_captcha_ans'] = $num1 + $num2;
+    $_SESSION['reg_captcha_str'] = "$num1 + $num2";
+}
+
+$error = '';
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+    $role = $_POST['role'] ?? 'student';
+    $captcha = $_POST['captcha'] ?? '';
+
+    // Validate email suffix based on role
+    $email_valid = true;
+    if ($role === 'faculty' && !str_ends_with(strtolower($email), '@faculty.uetm.edu')) {
+        $error = 'Faculty accounts must use an @faculty.uetm.edu email address.';
+        $email_valid = false;
+    } elseif ($role === 'staff' && !str_ends_with(strtolower($email), '@staff.uetm.edu')) {
+        $error = 'Library Management Staff must use an @staff.uetm.edu email address.';
+        $email_valid = false;
+    }
+
+    if ($email_valid) {
+        if (empty($username) || empty($email) || empty($password) || empty($confirm_password) || empty($captcha)) {
+            $error = 'Please fill in all fields.';
+        } elseif ((int)$captcha !== $_SESSION['reg_captcha_ans']) {
+            $error = 'Security check failed. Incorrect math answer.';
+            // Regenerate captcha on failure
+            $num1 = rand(1, 9);
+            $num2 = rand(1, 9);
+            $_SESSION['reg_captcha_ans'] = $num1 + $num2;
+            $_SESSION['reg_captcha_str'] = "$num1 + $num2";
+        } elseif ($password !== $confirm_password) {
+            $error = 'Passwords do not match.';
+        } elseif (strlen($password) < 6) {
+            $error = 'Password must be at least 6 characters.';
+        } else {
+            if (isset($pdo)) {
+                $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ? OR username = ?');
+                $stmt->execute([$email, $username]);
+                if ($stmt->fetch()) {
+                    $error = 'Username or Email already exists.';
+                } else {
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                    $is_approved = ($role === 'student') ? 1 : 0;
+                    $stmt = $pdo->prepare('INSERT INTO users (username, email, password, role, is_approved) VALUES (?, ?, ?, ?, ?)');
+                    if ($stmt->execute([$username, $email, $hashed_password, $role, $is_approved])) {
+                        if ($is_approved) {
+                            $success = 'Registration successful! You can now login.';
+                        } else {
+                            $success = 'Registration successful! Your account is pending approval by an admin.';
+                        }
+                    } else {
+                        $error = 'Something went wrong.';
+                    }
+                }
+            }
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | UETM Library</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#0f766e', secondary: '#0369a1' } } } }</script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="assets/js/theme.js"></script>
+    <style>
+        body { font-family: 'Outfit', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .dark .glass { background: rgba(17, 24, 39, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .bg-animated { background: linear-gradient(-45deg, #0f766e, #0369a1, #0ea5e9, #14b8a6); background-size: 400% 400%; animation: gradient 15s ease infinite; }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300 min-h-screen flex text-gray-800 dark:text-gray-200">
+    
+    <div class="hidden lg:flex w-1/2 bg-animated items-center justify-center relative overflow-hidden order-2">
+        <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+        <div class="relative z-10 text-center text-white px-12">
+            <i class="fas fa-university text-7xl drop-shadow-lg mb-6"></i>
+            <h1 class="text-5xl font-bold mb-4 tracking-tight">Join UETM Library</h1>
+            <p class="text-xl font-light opacity-90">Register as a Student, Faculty, or Management Staff.</p>
+        </div>
+    </div>
+
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 relative order-1 overflow-y-auto max-h-screen">
+        <div class="absolute top-6 left-6 z-20 fixed">
+            <button id="theme-toggle" class="p-3 rounded-full glass hover:bg-gray-200 dark:hover:bg-gray-700 transition shadow-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                <i class="fas fa-moon text-gray-800 dark:hidden text-lg"></i>
+                <i class="fas fa-sun text-yellow-300 hidden dark:inline text-lg"></i>
+            </button>
+        </div>
+
+        <div class="w-full max-w-md glass p-10 rounded-2xl shadow-2xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] transform transition hover:scale-[1.01] duration-300 my-8">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gradient-to-tr from-secondary to-primary rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4 transform -rotate-3">
+                    <i class="fas fa-user-plus text-white text-3xl rotate-3"></i>
+                </div>
+                <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-secondary to-primary">Create Account</h2>
+            </div>
+
+            <?php if ($error): ?>
+                <div class="bg-red-500 bg-opacity-10 border-l-4 border-red-500 text-red-700 dark:text-red-400 p-4 rounded mb-6 text-sm flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i> <?php echo htmlspecialchars($error); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($success): ?>
+                <div class="bg-green-500 bg-opacity-10 border-l-4 border-green-500 text-green-700 dark:text-green-400 p-4 rounded mb-6 text-sm flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i> <?php echo htmlspecialchars($success); ?>
+                </div>
+            <?php endif; ?>
+
+            <form method="POST" action="" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">I am a:</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="role" value="student" class="peer sr-only" checked>
+                            <div class="text-center py-2 px-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary transition">Student</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="role" value="faculty" class="peer sr-only">
+                            <div class="text-center py-2 px-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm peer-checked:bg-secondary peer-checked:text-white peer-checked:border-secondary transition">Faculty</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="role" value="staff" class="peer sr-only">
+                            <div class="text-center py-2 px-1 border border-gray-300 dark:border-gray-600 rounded-lg text-sm peer-checked:bg-gray-800 peer-checked:text-white peer-checked:border-gray-800 transition">Staff</div>
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">*Faculty requires @faculty.uetm.edu. Staff requires @staff.uetm.edu.</p>
+                </div>
+
+                <div>
+                    <label for="username" class="block text-sm font-medium mb-1">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-user text-gray-400"></i></div>
+                        <input type="text" id="username" name="username" required class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-secondary focus:border-secondary sm:text-sm bg-white dark:bg-gray-800 transition shadow-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium mb-1">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-envelope text-gray-400"></i></div>
+                        <input type="email" id="email" name="email" required class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-secondary focus:border-secondary sm:text-sm bg-white dark:bg-gray-800 transition shadow-sm">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="password" class="block text-sm font-medium mb-1">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-lock text-gray-400"></i></div>
+                            <input type="password" id="password" name="password" required class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-secondary focus:border-secondary sm:text-sm bg-white dark:bg-gray-800 transition shadow-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="confirm_password" class="block text-sm font-medium mb-1">Confirm</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-check text-gray-400"></i></div>
+                            <input type="password" id="confirm_password" name="confirm_password" required class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-secondary focus:border-secondary sm:text-sm bg-white dark:bg-gray-800 transition shadow-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="captcha" class="block text-sm font-bold mb-1 text-primary">Security Check: What is <?php echo $_SESSION['reg_captcha_str']; ?>?</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-shield-alt text-gray-400"></i>
+                        </div>
+                        <input type="number" id="captcha" name="captcha" required placeholder="Enter the sum"
+                            class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-secondary focus:border-secondary sm:text-sm bg-gray-50 dark:bg-gray-700 transition shadow-sm font-bold">
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-gradient-to-r from-secondary to-primary hover:from-pink-600 hover:to-indigo-600 focus:outline-none transform transition hover:-translate-y-0.5">
+                        Register Account <i class="fas fa-paper-plane ml-2 mt-1"></i>
+                    </button>
+                </div>
+            </form>
+
+            <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+                Already registered? 
+                <a href="index.php" class="font-bold text-secondary hover:text-pink-500 transition border-b-2 border-transparent hover:border-secondary">Sign in</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
