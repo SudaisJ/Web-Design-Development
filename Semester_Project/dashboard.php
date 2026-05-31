@@ -33,6 +33,17 @@ if (isset($pdo)) {
             $stmt = $pdo->query("SELECT id, username, email, role FROM users WHERE is_approved = 0");
             $pending_users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $waitlist_count = $pdo->query("SELECT COUNT(*) FROM waitlist")->fetchColumn();
+            
+            // Fetch active borrowings for admin
+            $stmt = $pdo->query("
+                SELECT u.username, b.title, br.borrow_date, br.due_date 
+                FROM borrowings br 
+                JOIN users u ON br.user_id = u.id 
+                JOIN books b ON br.book_id = b.id 
+                WHERE br.status = 'borrowed' 
+                ORDER BY br.borrow_date DESC LIMIT 5
+            ");
+            $admin_active_borrowings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             // Student or Faculty
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM borrowings WHERE user_id = ? AND status = 'borrowed'");
@@ -76,6 +87,7 @@ if (isset($pdo)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | UETM Library</title>
+    <link rel="icon" type="image/png" href="assets/images/uetm_logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#0f766e', secondary: '#0369a1' } } } }</script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -112,9 +124,13 @@ if (isset($pdo)) {
                         <i class="fas fa-sun text-yellow-400 hidden dark:inline"></i>
                     </button>
                     <a href="profile.php" class="flex items-center space-x-3 border-l pl-6 dark:border-gray-700 hover:opacity-80 transition group">
-                        <div class="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center text-primary dark:text-teal-300 font-bold uppercase group-hover:scale-110 transition transform">
-                            <?php echo substr($_SESSION['username'], 0, 1); ?>
-                        </div>
+                        <?php if(!empty($_SESSION['profile_image']) && $_SESSION['profile_image'] !== 'default_avatar.png'): ?>
+                            <img src="uploads/<?php echo htmlspecialchars($_SESSION['profile_image']); ?>" class="w-8 h-8 rounded-full object-cover shadow group-hover:scale-110 transition transform" alt="Profile">
+                        <?php else: ?>
+                            <div class="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center text-primary dark:text-teal-300 font-bold uppercase group-hover:scale-110 transition transform">
+                                <?php echo substr($_SESSION['username'], 0, 1); ?>
+                            </div>
+                        <?php endif; ?>
                         <div class="flex flex-col">
                             <span class="font-bold text-sm leading-tight group-hover:text-primary transition"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                             <span class="text-xs text-gray-500 dark:text-gray-400 capitalize"><?php echo $role; ?></span>
@@ -248,6 +264,36 @@ if (isset($pdo)) {
                 <div class="h-80 w-full relative"><canvas id="inventoryChart"></canvas></div>
             </div>
             
+            <div class="glass rounded-3xl p-8 shadow-xl mt-10">
+                <h2 class="text-2xl font-bold mb-6 flex items-center"><i class="fas fa-list-alt text-primary mr-3"></i> Recent Borrowings</h2>
+                <?php if (count($admin_active_borrowings) > 0): ?>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                                    <th class="py-3 px-4 font-bold text-sm">Student/Faculty</th>
+                                    <th class="py-3 px-4 font-bold text-sm">Book Title</th>
+                                    <th class="py-3 px-4 font-bold text-sm">Borrowed On</th>
+                                    <th class="py-3 px-4 font-bold text-sm">Due Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($admin_active_borrowings as $ab): ?>
+                                    <tr class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                                        <td class="py-3 px-4 font-medium"><?php echo htmlspecialchars($ab['username']); ?></td>
+                                        <td class="py-3 px-4 text-gray-500"><?php echo htmlspecialchars($ab['title']); ?></td>
+                                        <td class="py-3 px-4 text-sm"><?php echo date('M d, Y', strtotime($ab['borrow_date'])); ?></td>
+                                        <td class="py-3 px-4 text-sm text-red-500 font-medium"><?php echo date('M d, Y', strtotime($ab['due_date'])); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <p class="text-gray-500">No books are currently borrowed.</p>
+                <?php endif; ?>
+            </div>
+            
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
                     const ctx = document.getElementById('inventoryChart').getContext('2d');
@@ -364,6 +410,7 @@ if (isset($pdo)) {
                                     <th class="py-4 px-6 font-bold text-sm hidden md:table-cell">Author</th>
                                     <th class="py-4 px-6 font-bold text-sm">Borrowed On</th>
                                     <th class="py-4 px-6 font-bold text-sm">Returned On</th>
+                                    <th class="py-4 px-6 font-bold text-sm">Fine Paid</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -373,6 +420,9 @@ if (isset($pdo)) {
                                         <td class="py-4 px-6 text-gray-500 hidden md:table-cell"><?php echo htmlspecialchars($history['author']); ?></td>
                                         <td class="py-4 px-6 text-sm"><?php echo date('M d, Y', strtotime($history['borrow_date'])); ?></td>
                                         <td class="py-4 px-6 text-sm text-green-500 font-medium"><?php echo date('M d, Y', strtotime($history['return_date'])); ?></td>
+                                        <td class="py-4 px-6 text-sm <?php echo $history['fine_amount'] > 0 ? 'text-red-500 font-bold' : 'text-gray-500'; ?>">
+                                            Rs. <?php echo htmlspecialchars($history['fine_amount']); ?>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

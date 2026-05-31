@@ -59,6 +59,7 @@ if (isset($pdo)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Catalog | UETM Library</title>
+    <link rel="icon" type="image/png" href="assets/images/uetm_logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#0f766e', secondary: '#0369a1' } } } }</script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -93,9 +94,13 @@ if (isset($pdo)) {
                         <i class="fas fa-sun text-yellow-400 hidden dark:inline"></i>
                     </button>
                     <a href="profile.php" class="flex items-center space-x-3 border-l pl-6 dark:border-gray-700 hover:opacity-80 transition group">
-                        <div class="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center text-primary dark:text-teal-300 font-bold uppercase group-hover:scale-110 transition transform">
-                            <?php echo substr($_SESSION['username'], 0, 1); ?>
-                        </div>
+                        <?php if(!empty($_SESSION['profile_image']) && $_SESSION['profile_image'] !== 'default_avatar.png'): ?>
+                            <img src="uploads/<?php echo htmlspecialchars($_SESSION['profile_image']); ?>" class="w-8 h-8 rounded-full object-cover shadow group-hover:scale-110 transition transform" alt="Profile">
+                        <?php else: ?>
+                            <div class="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center text-primary dark:text-teal-300 font-bold uppercase group-hover:scale-110 transition transform">
+                                <?php echo substr($_SESSION['username'], 0, 1); ?>
+                            </div>
+                        <?php endif; ?>
                         <div class="flex flex-col">
                             <span class="font-bold text-sm leading-tight group-hover:text-primary transition"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                             <span class="text-xs text-gray-500 dark:text-gray-400 capitalize"><?php echo $role; ?></span>

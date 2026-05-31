@@ -26,7 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
         $allowed_exts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
         
-        if (in_array($file_ext, $allowed_exts)) {
+        // Secure upload checks
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime_type = finfo_file($finfo, $file_tmp);
+        finfo_close($finfo);
+        $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        $max_size = 5 * 1024 * 1024; // 5MB
+        
+        if (in_array($file_ext, $allowed_exts) && in_array($mime_type, $allowed_mimes) && $_FILES['cover_image']['size'] <= $max_size) {
             $new_file_name = uniqid('cover_') . '.' . $file_ext;
             if (move_uploaded_file($file_tmp, $upload_dir . $new_file_name)) {
                 $cover_image = $new_file_name;
@@ -36,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 redirect('books.php');
             }
         } else {
-            $_SESSION['error'] = 'Invalid file type for cover image.';
+            $_SESSION['error'] = 'Invalid file type or size exceeds 5MB.';
             redirect('books.php');
         }
     }
@@ -209,16 +216,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($book_id) {
                 $pdo->beginTransaction();
                 try {
-                    // Update borrowing record
-                    $stmt = $pdo->prepare("UPDATE borrowings SET status = 'returned', return_date = CURRENT_TIMESTAMP WHERE user_id = ? AND book_id = ? AND status = 'borrowed'");
+                    // Calculate fine if overdue
+                    $stmt = $pdo->prepare("SELECT due_date FROM borrowings WHERE user_id = ? AND book_id = ? AND status = 'borrowed'");
                     $stmt->execute([$user_id, $book_id]);
+                    $borrowing = $stmt->fetch();
+                    
+                    $fine_amount = 0;
+                    if ($borrowing && strtotime($borrowing['due_date']) < time()) {
+                        $days_overdue = floor((time() - strtotime($borrowing['due_date'])) / (60 * 60 * 24));
+                        $fine_amount = $days_overdue * 50; // Rs. 50 per day
+                    }
+
+                    // Update borrowing record
+                    $stmt = $pdo->prepare("UPDATE borrowings SET status = 'returned', return_date = CURRENT_TIMESTAMP, fine_amount = ? WHERE user_id = ? AND book_id = ? AND status = 'borrowed'");
+                    $stmt->execute([$fine_amount, $user_id, $book_id]);
 
                     if ($stmt->rowCount() > 0) {
-                        // Increment book quantity
-                        $stmt = $pdo->prepare("UPDATE books SET quantity = quantity + 1, status = 'Available' WHERE id = ?");
+                        // Check if anyone is on the waitlist
+                        $stmt = $pdo->prepare("SELECT id, user_id FROM waitlist WHERE book_id = ? ORDER BY joined_at ASC LIMIT 1");
                         $stmt->execute([$book_id]);
+                        $next_user = $stmt->fetch();
+
+                        if ($next_user) {
+                            // Auto-assign to next user
+                            $stmt = $pdo->prepare("INSERT INTO borrowings (user_id, book_id, due_date) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 17 WEEK))");
+                            $stmt->execute([$next_user['user_id'], $book_id]);
+                            
+                            // Remove from waitlist
+                            $stmt = $pdo->prepare("DELETE FROM waitlist WHERE id = ?");
+                            $stmt->execute([$next_user['id']]);
+                            
+                            $_SESSION['message'] = 'Book returned! It was automatically checked out to the next person on the waitlist.';
+                        } else {
+                            // Increment book quantity
+                            $stmt = $pdo->prepare("UPDATE books SET quantity = quantity + 1, status = 'Available' WHERE id = ?");
+                            $stmt->execute([$book_id]);
+                            $_SESSION['message'] = 'Book returned successfully!';
+                        }
                         $pdo->commit();
-                        $_SESSION['message'] = 'Book returned successfully!';
                     } else {
                         $pdo->rollBack();
                         $_SESSION['error'] = 'Error returning book. Record not found.';

@@ -11,33 +11,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
     $new_password = $_POST['new_password'] ?? '';
     
-    if ($username) {
-        if ($new_password) {
-            $hashed = password_hash($new_password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("UPDATE users SET username = ?, password = ? WHERE id = ?");
-            if ($stmt->execute([$username, $hashed, $user_id])) {
-                $_SESSION['username'] = $username;
-                $success = 'Profile and password updated successfully!';
+    $profile_image_sql = "";
+    $params = [$username];
+
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+        $file_tmp = $_FILES['profile_image']['tmp_name'];
+        $file_name = basename($_FILES['profile_image']['name']);
+        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime_type = finfo_file($finfo, $file_tmp);
+        finfo_close($finfo);
+        
+        $allowed_exts = ['jpg', 'jpeg', 'png', 'webp'];
+        $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
+        $max_size = 2 * 1024 * 1024; // 2MB
+        
+        if (in_array($file_ext, $allowed_exts) && in_array($mime_type, $allowed_mimes) && $_FILES['profile_image']['size'] <= $max_size) {
+            $new_file_name = uniqid('profile_') . '.' . $file_ext;
+            if (move_uploaded_file($file_tmp, 'uploads/' . $new_file_name)) {
+                $profile_image_sql = ", profile_image = ?";
+                $params[] = $new_file_name;
             } else {
-                $error = 'Failed to update profile.';
+                $error = 'Failed to upload profile image.';
             }
         } else {
-            $stmt = $pdo->prepare("UPDATE users SET username = ? WHERE id = ?");
-            if ($stmt->execute([$username, $user_id])) {
-                $_SESSION['username'] = $username;
-                $success = 'Profile updated successfully!';
-            } else {
-                $error = 'Failed to update profile.';
-            }
+            $error = 'Invalid image type or size exceeds 2MB.';
         }
-    } else {
+    }
+
+    if ($username && empty($error)) {
+        if ($new_password) {
+            $hashed = password_hash($new_password, PASSWORD_DEFAULT);
+            $profile_image_sql .= ", password = ?";
+            $params[] = $hashed;
+        }
+        
+        $params[] = $user_id;
+        $stmt = $pdo->prepare("UPDATE users SET username = ? {$profile_image_sql} WHERE id = ?");
+        
+        if ($stmt->execute($params)) {
+            $_SESSION['username'] = $username;
+            $success = 'Profile updated successfully!';
+        } else {
+            $error = 'Failed to update profile.';
+        }
+    } elseif (!$username) {
         $error = 'Username cannot be empty.';
     }
 }
 
-$stmt = $pdo->prepare("SELECT email FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT email, profile_image FROM users WHERE id = ?");
 $stmt->execute([$user_id]);
-$user_email = $stmt->fetchColumn();
+$user_data = $stmt->fetch();
+$user_email = $user_data['email'];
+$profile_image = $user_data['profile_image'] ?? 'default_avatar.png';
+$_SESSION['profile_image'] = $profile_image;
 ?>
 <!DOCTYPE html>
 <html lang="en" class="light">
@@ -45,6 +74,7 @@ $user_email = $stmt->fetchColumn();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Settings | UETM Library</title>
+    <link rel="icon" type="image/png" href="assets/images/uetm_logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#0f766e', secondary: '#0369a1' } } } }</script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -78,9 +108,13 @@ $user_email = $stmt->fetchColumn();
                         <i class="fas fa-sun text-yellow-400 hidden dark:inline"></i>
                     </button>
                     <a href="profile.php" class="flex items-center space-x-3 border-l pl-6 dark:border-gray-700 hover:opacity-80 transition group">
-                        <div class="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center text-primary dark:text-teal-300 font-bold uppercase group-hover:scale-110 transition transform">
-                            <?php echo substr($_SESSION['username'], 0, 1); ?>
-                        </div>
+                        <?php if(!empty($_SESSION['profile_image']) && $_SESSION['profile_image'] !== 'default_avatar.png'): ?>
+                            <img src="uploads/<?php echo htmlspecialchars($_SESSION['profile_image']); ?>" class="w-8 h-8 rounded-full object-cover shadow group-hover:scale-110 transition transform" alt="Profile">
+                        <?php else: ?>
+                            <div class="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900 flex items-center justify-center text-primary dark:text-teal-300 font-bold uppercase group-hover:scale-110 transition transform">
+                                <?php echo substr($_SESSION['username'], 0, 1); ?>
+                            </div>
+                        <?php endif; ?>
                         <div class="flex flex-col">
                             <span class="font-bold text-sm leading-tight text-primary"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                             <span class="text-xs text-gray-500 dark:text-gray-400 capitalize"><?php echo $role; ?></span>
@@ -95,9 +129,13 @@ $user_email = $stmt->fetchColumn();
     <main class="max-w-3xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div class="glass rounded-3xl p-10 shadow-2xl relative overflow-hidden">
             <div class="text-center mb-10">
-                <div class="w-24 h-24 bg-gradient-to-tr from-primary to-secondary rounded-full mx-auto flex items-center justify-center shadow-lg mb-4 text-white text-4xl font-bold uppercase">
-                    <?php echo substr($_SESSION['username'], 0, 1); ?>
-                </div>
+                <?php if(!empty($profile_image) && $profile_image !== 'default_avatar.png'): ?>
+                    <img src="uploads/<?php echo htmlspecialchars($profile_image); ?>" class="w-24 h-24 rounded-full object-cover mx-auto shadow-lg mb-4 border-4 border-white dark:border-gray-800" alt="Profile">
+                <?php else: ?>
+                    <div class="w-24 h-24 bg-gradient-to-tr from-primary to-secondary rounded-full mx-auto flex items-center justify-center shadow-lg mb-4 text-white text-4xl font-bold uppercase">
+                        <?php echo substr($_SESSION['username'], 0, 1); ?>
+                    </div>
+                <?php endif; ?>
                 <h1 class="text-3xl font-bold">Profile Settings</h1>
                 <p class="text-gray-500 dark:text-gray-400 mt-2">Update your personal information and security credentials.</p>
             </div>
@@ -113,7 +151,7 @@ $user_email = $stmt->fetchColumn();
                 </div>
             <?php endif; ?>
 
-            <form action="profile.php" method="POST" class="space-y-6">
+            <form action="profile.php" method="POST" enctype="multipart/form-data" class="space-y-6">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Email Address (Read-only)</label>
                     <div class="relative">
@@ -122,6 +160,11 @@ $user_email = $stmt->fetchColumn();
                         </div>
                         <input type="email" value="<?php echo htmlspecialchars($user_email); ?>" disabled class="block w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-500 shadow-sm text-sm cursor-not-allowed">
                     </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Profile Picture (Optional)</label>
+                    <input type="file" name="profile_image" accept="image/*" class="block w-full border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-2 bg-white dark:bg-gray-800 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-primary file:text-white hover:file:bg-teal-600 transition text-sm">
                 </div>
 
                 <div>
